@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import ctypes
 from pathlib import Path
 import re
 import tempfile
@@ -30,6 +31,16 @@ except ImportError:
 BOX = "\u2588"
 SUPPORTED_SUFFIXES = {".txt", ".docx", ".doc", ".pdf"}
 WORD_DOCX_FORMAT = 16
+
+
+def enable_high_dpi() -> None:
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except Exception:
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
 
 
 def default_output_path(input_path: Path) -> Path:
@@ -403,6 +414,7 @@ class RedactorApp:
 
 
 def main() -> None:
+    enable_high_dpi()
     root = tk.Tk()
     RedactorApp(root)
     root.mainloop()
